@@ -3,24 +3,56 @@ mod models;
 
 use ext::PathExt;
 use models::{Cli, Context};
-use std::path::Path;
+use std::io::Error;
+use std::path::{Path, PathBuf};
 
 fn main() {
     let cli = Cli::parse();
 
-    let ctx = match Context::new(cli) {
-        Ok(ctx) => ctx,
+    let target = match resolve_target(&cli) {
+        Ok(target) => target,
         Err(_) => {
-            eprintln!("ERROR: Unable to resolve package or target path");
+            eprintln!("ERROR: Failed to resolve target directory");
             return;
         }
     };
 
+    let package = match resolve_package(&cli) {
+        Ok(package) => package,
+        Err(_) => {
+            eprintln!("ERROR: Failed to resolve package directory");
+            return;
+        }
+    };
+
+    let ctx = Context::new(cli, package, target);
     if ctx.from == ctx.to {
         println!("WARNING: Skipping target which is the same as current directory")
     }
 
     process(&ctx, &ctx.from);
+}
+
+fn resolve_target(cli: &Cli) -> Result<PathBuf, Error> {
+    let target = match &cli.target {
+        Some(target) => target.clone(),
+        None => {
+            let dir = std::env::current_dir()?;
+            match dir.parent() {
+                Some(parent) => parent.to_path_buf(),
+                None => dir,
+            }
+        }
+    };
+    dunce::canonicalize(target)
+}
+
+fn resolve_package(cli: &Cli) -> Result<PathBuf, Error> {
+    let dir = match &cli.dir {
+        Some(dir) => dir.clone(),
+        None => std::env::current_dir()?,
+    };
+    dunce::canonicalize(dir.join(&cli.package))
 }
 
 fn process(ctx: &Context, base: &Path) {
