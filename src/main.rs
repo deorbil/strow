@@ -8,6 +8,10 @@ use std::path::{Path, PathBuf};
 
 fn main() {
     let cli = Cli::parse();
+    if cli.package.is_absolute() {
+        eprintln!("ERROR: Package path must be relative!");
+        return;
+    }
 
     let target = match resolve_target(&cli) {
         Ok(target) => target,
