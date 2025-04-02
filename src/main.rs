@@ -9,14 +9,14 @@ use std::path::{Path, PathBuf};
 fn main() {
     let cli = Cli::parse();
     if cli.package.is_absolute() {
-        eprintln!("ERROR: Package path must be relative!");
+        eprintln!("FATAL: Package path must be relative!");
         return;
     }
 
     let target = match resolve_target(&cli) {
         Ok(target) => target,
         Err(_) => {
-            eprintln!("ERROR: Failed to resolve target directory");
+            eprintln!("FATAL: Failed to resolve target directory");
             return;
         }
     };
@@ -24,7 +24,7 @@ fn main() {
     let package = match resolve_package(&cli) {
         Ok(package) => package,
         Err(_) => {
-            eprintln!("ERROR: Failed to resolve package directory");
+            eprintln!("FATAL: Failed to resolve package directory");
             return;
         }
     };
