@@ -9,14 +9,14 @@ use std::path::{Path, PathBuf};
 fn main() {
     let cli = Cli::parse();
     if cli.package.is_absolute() {
-        eprintln!("FATAL: Package path must be relative!");
+        eprintln!("ERROR: <PACKAGE> must be a relative path from <DIR>!");
         return;
     }
 
     let target = match resolve_target(&cli) {
         Ok(target) => target,
         Err(_) => {
-            eprintln!("FATAL: Failed to resolve target directory");
+            eprintln!("ERROR: Failed to resolve <TARGET> directory");
             return;
         }
     };
@@ -24,14 +24,14 @@ fn main() {
     let package = match resolve_package(&cli) {
         Ok(package) => package,
         Err(_) => {
-            eprintln!("FATAL: Failed to resolve package directory");
+            eprintln!("ERROR: Failed to resolve <PACKAGE> directory");
             return;
         }
     };
 
     let ctx = Context::new(cli, package, target);
     if ctx.from == ctx.to {
-        println!("WARNING: Skipping target which is the same as current directory");
+        println!("ERROR: <TARGET> is the same as <DIR>!");
         return;
     }
 
@@ -65,7 +65,7 @@ fn process(ctx: &Context, base: &Path) {
         Ok(entries) => entries,
         Err(_) => {
             if ctx.cli.verbose {
-                eprintln!("ERROR: Unable to access {}", base.display());
+                eprintln!("WARN: Unable to access {}", base.display());
             }
             return;
         }
@@ -76,7 +76,7 @@ fn process(ctx: &Context, base: &Path) {
             Ok(entry) => entry.path(),
             Err(_) => {
                 if ctx.cli.verbose {
-                    eprintln!("ERROR: Unable to access entry in {}", base.display());
+                    eprintln!("WARN: Unable to access entry in {}", base.display());
                 }
                 continue;
             }
@@ -86,7 +86,7 @@ fn process(ctx: &Context, base: &Path) {
             Ok(target) => target,
             Err(_) => {
                 if ctx.cli.verbose {
-                    eprintln!("ERROR: Failed replacing prefix of {}", path.display());
+                    eprintln!("WARN: Failed replacing prefix of {}", path.display());
                 }
                 continue;
             }
@@ -118,7 +118,7 @@ fn process_file(ctx: &Context, base: &Path, target: &Path) {
         Ok(_) => (),
         Err(_) => {
             if ctx.cli.verbose {
-                eprintln!("ERROR: Unable to create symlink for {}", base.display());
+                eprintln!("WARN: Unable to create symlink for {}", base.display());
             }
         }
     }
@@ -146,7 +146,7 @@ fn process_dir(ctx: &Context, base: &Path, target: &Path) {
         Ok(_) => (),
         Err(_) => {
             if ctx.cli.verbose {
-                eprintln!("ERROR: Unable to create symlink for {}", base.display());
+                eprintln!("WARN: Unable to create symlink for {}", base.display());
             }
         }
     }
