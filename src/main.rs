@@ -31,7 +31,8 @@ fn main() {
 
     let ctx = Context::new(cli, package, target);
     if ctx.from == ctx.to {
-        println!("WARNING: Skipping target which is the same as current directory")
+        println!("WARNING: Skipping target which is the same as current directory");
+        return;
     }
 
     process(&ctx, &ctx.from);
