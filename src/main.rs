@@ -106,21 +106,20 @@ fn process_file(ctx: &Context, base: &Path, target: &Path) {
         return;
     }
 
-    if ctx.cli.verbose {
-        println!("INFO: Link {} -> {}", base.display(), target.display());
-    }
-
-    if ctx.cli.no {
-        return;
-    }
-
-    match symlink::symlink_file(base, target) {
-        Ok(_) => (),
-        Err(_) => {
-            if ctx.cli.verbose {
-                eprintln!("WARN: Unable to create symlink for {}", base.display());
+    if !ctx.cli.no {
+        match symlink::symlink_file(base, target) {
+            Ok(_) => (),
+            Err(_) => {
+                if ctx.cli.verbose {
+                    eprintln!("WARN: Unable to create symlink for {}", base.display());
+                }
+                return;
             }
         }
+    }
+
+    if ctx.cli.verbose {
+        println!("INFO: Link {} -> {}", base.display(), target.display());
     }
 }
 
@@ -134,20 +133,19 @@ fn process_dir(ctx: &Context, base: &Path, target: &Path) {
         return;
     }
 
-    if ctx.cli.verbose {
-        println!("INFO: Link {} -> {}", base.display(), target.display());
-    }
-
-    if ctx.cli.no {
-        return;
-    }
-
-    match symlink::symlink_dir(base, target) {
-        Ok(_) => (),
-        Err(_) => {
-            if ctx.cli.verbose {
-                eprintln!("WARN: Unable to create symlink for {}", base.display());
+    if !ctx.cli.no {
+        match symlink::symlink_dir(base, target) {
+            Ok(_) => (),
+            Err(_) => {
+                if ctx.cli.verbose {
+                    eprintln!("WARN: Unable to create symlink for {}", base.display());
+                }
+                return;
             }
         }
+    }
+
+    if ctx.cli.verbose {
+        println!("INFO: Link {} -> {}", base.display(), target.display());
     }
 }
