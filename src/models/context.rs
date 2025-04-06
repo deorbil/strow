@@ -1,14 +1,18 @@
 use super::Cli;
 use std::path::PathBuf;
 
-pub struct Context {
+pub struct LinkContext {
     pub cli: Cli,
-    pub from: PathBuf,
-    pub to: PathBuf,
+    pub base_root_dir: PathBuf,
+    pub target_root_dir: PathBuf,
 }
 
-impl Context {
-    pub fn new(cli: Cli, from: PathBuf, to: PathBuf) -> Self {
-        Self { cli, from, to }
+impl LinkContext {
+    pub fn new(cli: Cli, base_root_dir: PathBuf, target_root_dir: PathBuf) -> Self {
+        Self {
+            cli,
+            base_root_dir,
+            target_root_dir,
+        }
     }
 }

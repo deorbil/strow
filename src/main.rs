@@ -2,7 +2,7 @@ mod ext;
 mod models;
 
 use ext::PathExt;
-use models::{Cli, Context};
+use models::{Cli, LinkContext};
 use std::io::Error;
 use std::path::{Path, PathBuf};
 
@@ -29,13 +29,13 @@ fn main() {
         }
     };
 
-    let ctx = Context::new(cli, package, target);
-    if ctx.from == ctx.to {
+    let ctx = LinkContext::new(cli, package, target);
+    if ctx.base_root_dir == ctx.target_root_dir {
         println!("ERROR: <TARGET> is the same as <DIR>!");
         return;
     }
 
-    process(&ctx, &ctx.from);
+    link_entries_in_dir(&ctx, &ctx.base_root_dir);
 }
 
 fn resolve_target(cli: &Cli) -> Result<PathBuf, Error> {
@@ -60,7 +60,7 @@ fn resolve_package(cli: &Cli) -> Result<PathBuf, Error> {
     dunce::canonicalize(dir.join(&cli.package))
 }
 
-fn process(ctx: &Context, base: &Path) {
+fn link_entries_in_dir(ctx: &LinkContext, base: &Path) {
     let entries = match base.read_dir() {
         Ok(entries) => entries,
         Err(_) => {
@@ -72,7 +72,7 @@ fn process(ctx: &Context, base: &Path) {
     };
 
     for entry in entries {
-        let path = match entry {
+        let entry_base = match entry {
             Ok(entry) => entry.path(),
             Err(_) => {
                 if ctx.cli.verbose {
@@ -82,22 +82,23 @@ fn process(ctx: &Context, base: &Path) {
             }
         };
 
-        let target = match path.replace_prefix(&ctx.from, &ctx.to) {
+        let entry_target = match entry_base.replace_prefix(&ctx.base_root_dir, &ctx.target_root_dir)
+        {
             Ok(target) => target,
             Err(_) => {
                 if ctx.cli.verbose {
-                    eprintln!("WARN: Failed replacing prefix of {}", path.display());
+                    eprintln!("WARN: Failed replacing prefix of {}", entry_base.display());
                 }
                 continue;
             }
         };
 
-        process_file(ctx, &path, &target);
-        process_dir(ctx, &path, &target);
+        link_file(ctx, &entry_base, &entry_target);
+        link_dir(ctx, &entry_base, &entry_target);
     }
 }
 
-fn process_file(ctx: &Context, base: &Path, target: &Path) {
+fn link_file(ctx: &LinkContext, base: &Path, target: &Path) {
     if !base.is_file() {
         return;
     }
@@ -123,13 +124,13 @@ fn process_file(ctx: &Context, base: &Path, target: &Path) {
     }
 }
 
-fn process_dir(ctx: &Context, base: &Path, target: &Path) {
+fn link_dir(ctx: &LinkContext, base: &Path, target: &Path) {
     if !base.is_dir() {
         return;
     }
 
     if target.exists() {
-        process(ctx, base);
+        link_entries_in_dir(ctx, base);
         return;
     }
 

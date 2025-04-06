@@ -14,7 +14,7 @@ pub struct Cli {
     #[arg(short, long)]
     pub target: Option<PathBuf>,
 
-    /// Simulate changes without making any modifications
+    /// Simulate changes without making any modifications to filesystem
     #[arg(short, long, alias = "simulate")]
     pub no: bool,
 
