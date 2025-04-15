@@ -3,7 +3,7 @@ use std::path::Path;
 use crate::context::Context;
 use crate::ext::PathExt;
 
-pub fn link_entries_in_dir(ctx: &Context, base: &Path, path: &Path) {
+pub fn stow_entries_in_dir(ctx: &Context, base: &Path, path: &Path) {
     let entries = match path.read_dir() {
         Ok(entries) => entries,
         Err(_) => {
@@ -15,7 +15,7 @@ pub fn link_entries_in_dir(ctx: &Context, base: &Path, path: &Path) {
     };
 
     for entry in entries {
-        let entry_base = match entry {
+        let entry_path = match entry {
             Ok(entry) => entry.path(),
             Err(_) => {
                 if ctx.cli.verbose {
@@ -25,22 +25,22 @@ pub fn link_entries_in_dir(ctx: &Context, base: &Path, path: &Path) {
             }
         };
 
-        let entry_target = match entry_base.replace_prefix(base, &ctx.target) {
+        let entry_target = match entry_path.replace_prefix(base, &ctx.target) {
             Ok(target) => target,
             Err(_) => {
                 if ctx.cli.verbose {
-                    eprintln!("WARN: Failed replacing prefix of {}", entry_base.display());
+                    eprintln!("WARN: Failed replacing prefix of {}", entry_path.display());
                 }
                 continue;
             }
         };
 
-        link_file(ctx, &entry_base, &entry_target);
-        link_dir(ctx, base, &entry_base, &entry_target);
+        stow_file(ctx, &entry_path, &entry_target);
+        stow_dir(ctx, base, &entry_path, &entry_target);
     }
 }
 
-fn link_file(ctx: &Context, path: &Path, target: &Path) {
+fn stow_file(ctx: &Context, path: &Path, target: &Path) {
     if !path.is_file() {
         return;
     }
@@ -66,13 +66,13 @@ fn link_file(ctx: &Context, path: &Path, target: &Path) {
     }
 }
 
-fn link_dir(ctx: &Context, base: &Path, path: &Path, target: &Path) {
+fn stow_dir(ctx: &Context, base: &Path, path: &Path, target: &Path) {
     if !path.is_dir() {
         return;
     }
 
     if target.is_dir() {
-        link_entries_in_dir(ctx, base, path);
+        stow_entries_in_dir(ctx, base, path);
         return;
     }
 

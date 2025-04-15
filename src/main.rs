@@ -42,7 +42,7 @@ fn main() {
             return;
         }
 
-        utils::link_entries_in_dir(&ctx, &path, &path);
+        utils::stow_entries_in_dir(&ctx, &path, &path);
     }
 }
 
