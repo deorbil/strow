@@ -11,10 +11,14 @@ use std::path::PathBuf;
 
 fn main() {
     let cli = Cli::parse();
-    if cli.package.is_absolute() {
-        eprintln!("ERROR: <PACKAGE> must be a relative path from <DIR>!");
-        return;
-    }
+
+    let dir = match resolve_dir(&cli) {
+        Ok(dir) => dir,
+        Err(_) => {
+            eprintln!("ERROR: Failed to resolve <DIR> directory");
+            return;
+        }
+    };
 
     let target = match resolve_target(&cli) {
         Ok(target) => target,
@@ -24,13 +28,13 @@ fn main() {
         }
     };
 
-    let package = match resolve_package(&cli) {
-        Ok(package) => package,
-        Err(_) => {
-            eprintln!("ERROR: Failed to resolve <PACKAGE> directory");
-            return;
-        }
-    };
+    // TODO: Extract this to a separate function
+    if cli.package.is_absolute() {
+        eprintln!("ERROR: <PACKAGE> must be a relative path from <DIR>!");
+        return;
+    }
+
+    let package = dir.join(&cli.package);
 
     let ctx = LinkContext::new(cli, package, target);
     if ctx.base_root_dir == ctx.target_root_dir {
@@ -39,6 +43,14 @@ fn main() {
     }
 
     utils::link_entries_in_dir(&ctx, &ctx.base_root_dir);
+}
+
+fn resolve_dir(cli: &Cli) -> Result<PathBuf, Error> {
+    let dir = match &cli.dir {
+        Some(dir) => dir.clone(),
+        None => std::env::current_dir()?,
+    };
+    dunce::canonicalize(dir)
 }
 
 fn resolve_target(cli: &Cli) -> Result<PathBuf, Error> {
@@ -53,12 +65,4 @@ fn resolve_target(cli: &Cli) -> Result<PathBuf, Error> {
         }
     };
     dunce::canonicalize(target)
-}
-
-fn resolve_package(cli: &Cli) -> Result<PathBuf, Error> {
-    let dir = match &cli.dir {
-        Some(dir) => dir.clone(),
-        None => std::env::current_dir()?,
-    };
-    dunce::canonicalize(dir.join(&cli.package))
 }
