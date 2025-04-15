@@ -2,18 +2,14 @@ use std::path::PathBuf;
 
 use crate::cli::Cli;
 
-pub struct LinkContext {
+pub struct Context {
     pub cli: Cli,
-    pub base_root_dir: PathBuf,
-    pub target_root_dir: PathBuf,
+    pub dir: PathBuf,
+    pub target: PathBuf,
 }
 
-impl LinkContext {
-    pub fn new(cli: Cli, base_root_dir: PathBuf, target_root_dir: PathBuf) -> Self {
-        Self {
-            cli,
-            base_root_dir,
-            target_root_dir,
-        }
+impl Context {
+    pub fn new(cli: Cli, dir: PathBuf, target: PathBuf) -> Self {
+        Self { cli, dir, target }
     }
 }

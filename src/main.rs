@@ -4,7 +4,7 @@ mod ext;
 mod utils;
 
 use cli::Cli;
-use context::LinkContext;
+use context::Context;
 
 use std::io::Error;
 use std::path::PathBuf;
@@ -28,21 +28,22 @@ fn main() {
         }
     };
 
+    let ctx = Context::new(cli, dir, target);
+
     // TODO: Extract this to a separate function
-    if cli.package.is_absolute() {
+    if ctx.cli.package.is_absolute() {
         eprintln!("ERROR: <PACKAGE> must be a relative path from <DIR>!");
         return;
     }
 
-    let package = dir.join(&cli.package);
+    let package = ctx.dir.join(&ctx.cli.package);
 
-    let ctx = LinkContext::new(cli, package, target);
-    if ctx.base_root_dir == ctx.target_root_dir {
+    if package == ctx.target {
         println!("ERROR: <TARGET> is the same as <DIR>!");
         return;
     }
 
-    utils::link_entries_in_dir(&ctx, &ctx.base_root_dir);
+    utils::link_entries_in_dir(&ctx, &package, &package);
 }
 
 fn resolve_dir(cli: &Cli) -> Result<PathBuf, Error> {
