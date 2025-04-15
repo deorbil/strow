@@ -45,7 +45,7 @@ fn link_file(ctx: &Context, path: &Path, target: &Path) {
         return;
     }
 
-    if target.exists() {
+    if target.is_file() {
         return;
     }
 
@@ -71,7 +71,7 @@ fn link_dir(ctx: &Context, base: &Path, path: &Path, target: &Path) {
         return;
     }
 
-    if target.exists() {
+    if target.is_dir() {
         link_entries_in_dir(ctx, base, path);
         return;
     }
