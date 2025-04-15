@@ -14,16 +14,22 @@ fn main() {
 
     let dir = match resolve_dir(&cli) {
         Ok(dir) => dir,
-        Err(_) => {
+        Err(err) => {
             eprintln!("ERROR: Failed to resolve <DIR> directory");
+            if cli.debug {
+                eprintln!("{}", err);
+            }
             return;
         }
     };
 
     let target = match resolve_target(&cli) {
         Ok(target) => target,
-        Err(_) => {
+        Err(err) => {
             eprintln!("ERROR: Failed to resolve <TARGET> directory");
+            if cli.debug {
+                eprintln!("{}", err);
+            }
             return;
         }
     };
@@ -38,7 +44,7 @@ fn main() {
 
         let path = ctx.dir.join(package);
         if path == ctx.target {
-            println!("ERROR: <TARGET> is the same as <DIR>!");
+            eprintln!("ERROR: <TARGET> is the same as <PACKAGE>!");
             return;
         }
 

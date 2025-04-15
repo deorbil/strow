@@ -23,6 +23,10 @@ pub struct Cli {
     /// Print additional logging information
     #[arg(short, long)]
     pub verbose: bool,
+
+    /// Print raw errors
+    #[arg(long)]
+    pub debug: bool,
 }
 
 impl Cli {

@@ -6,9 +6,12 @@ use crate::ext::PathExt;
 pub fn stow_entries_in_dir(ctx: &Context, base: &Path, path: &Path) {
     let entries = match path.read_dir() {
         Ok(entries) => entries,
-        Err(_) => {
+        Err(err) => {
             if ctx.cli.verbose {
                 eprintln!("WARN: Unable to access {}", path.display());
+                if ctx.cli.debug {
+                    eprintln!("{}", err);
+                }
             }
             return;
         }
@@ -17,9 +20,12 @@ pub fn stow_entries_in_dir(ctx: &Context, base: &Path, path: &Path) {
     for entry in entries {
         let entry_path = match entry {
             Ok(entry) => entry.path(),
-            Err(_) => {
+            Err(err) => {
                 if ctx.cli.verbose {
                     eprintln!("WARN: Unable to access entry in {}", path.display());
+                    if ctx.cli.debug {
+                        eprintln!("{}", err);
+                    }
                 }
                 continue;
             }
@@ -27,9 +33,12 @@ pub fn stow_entries_in_dir(ctx: &Context, base: &Path, path: &Path) {
 
         let entry_target = match entry_path.replace_prefix(base, &ctx.target) {
             Ok(target) => target,
-            Err(_) => {
+            Err(err) => {
                 if ctx.cli.verbose {
                     eprintln!("WARN: Failed replacing prefix of {}", entry_path.display());
+                    if ctx.cli.debug {
+                        eprintln!("{}", err);
+                    }
                 }
                 continue;
             }
@@ -52,9 +61,12 @@ fn stow_file(ctx: &Context, path: &Path, target: &Path) {
     if !ctx.cli.no {
         match symlink::symlink_file(path, target) {
             Ok(_) => (),
-            Err(_) => {
+            Err(err) => {
                 if ctx.cli.verbose {
                     eprintln!("WARN: Unable to create symlink for {}", path.display());
+                    if ctx.cli.debug {
+                        eprintln!("{}", err);
+                    }
                 }
                 return;
             }
@@ -79,9 +91,12 @@ fn stow_dir(ctx: &Context, base: &Path, path: &Path, target: &Path) {
     if !ctx.cli.no {
         match symlink::symlink_dir(path, target) {
             Ok(_) => (),
-            Err(_) => {
+            Err(err) => {
                 if ctx.cli.verbose {
                     eprintln!("WARN: Unable to create symlink for {}", path.display());
+                    if ctx.cli.debug {
+                        eprintln!("{}", err);
+                    }
                 }
                 return;
             }
