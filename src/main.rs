@@ -29,21 +29,21 @@ fn main() {
     };
 
     let ctx = Context::new(cli, dir, target);
+    for package in &ctx.cli.package {
+        // TODO: Extract this to a separate function
+        if package.is_absolute() {
+            eprintln!("ERROR: <PACKAGE> must be a relative path from <DIR>!");
+            return;
+        }
 
-    // TODO: Extract this to a separate function
-    if ctx.cli.package.is_absolute() {
-        eprintln!("ERROR: <PACKAGE> must be a relative path from <DIR>!");
-        return;
+        let path = ctx.dir.join(package);
+        if path == ctx.target {
+            println!("ERROR: <TARGET> is the same as <DIR>!");
+            return;
+        }
+
+        utils::link_entries_in_dir(&ctx, &path, &path);
     }
-
-    let package = ctx.dir.join(&ctx.cli.package);
-
-    if package == ctx.target {
-        println!("ERROR: <TARGET> is the same as <DIR>!");
-        return;
-    }
-
-    utils::link_entries_in_dir(&ctx, &package, &package);
 }
 
 fn resolve_dir(cli: &Cli) -> Result<PathBuf, Error> {

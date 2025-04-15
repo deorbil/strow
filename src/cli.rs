@@ -1,11 +1,12 @@
 use std::path::PathBuf;
 
-use clap::Parser;
+use clap::{ArgAction, Parser};
 
 #[derive(Parser, Debug)]
 #[command(version)]
 pub struct Cli {
-    pub package: PathBuf,
+    #[arg(action = ArgAction::Append)]
+    pub package: Vec<PathBuf>,
 
     /// The directory that contains the package [default: current directory]
     #[arg(short, long)]
