@@ -1,12 +1,13 @@
 mod cli;
 mod context;
 mod ext;
+mod utils;
 
 use cli::Cli;
 use context::LinkContext;
-use ext::PathExt;
+
 use std::io::Error;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 fn main() {
     let cli = Cli::parse();

@@ -1,5 +1,6 @@
-use super::Cli;
 use std::path::PathBuf;
+
+use crate::cli::Cli;
 
 pub struct LinkContext {
     pub cli: Cli,
