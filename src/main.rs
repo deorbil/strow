@@ -1,8 +1,10 @@
+mod cli;
+mod context;
 mod ext;
-mod models;
 
+use cli::Cli;
+use context::LinkContext;
 use ext::PathExt;
-use models::{Cli, LinkContext};
 use std::io::Error;
 use std::path::{Path, PathBuf};
 
