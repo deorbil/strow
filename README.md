@@ -10,5 +10,5 @@ Strow is a CLI app based on [GNU Stow](https://www.gnu.org/software/stow/)
 - [ ] Delete and restow
 - [ ] Regex filter
 - [ ] Dotfiles prefix
-- [ ] Multi package
+- [x] Multi package
 - [ ] Concurrency
