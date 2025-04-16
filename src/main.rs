@@ -39,13 +39,13 @@ fn main() {
         // TODO: Extract this to a separate function
         if package.is_absolute() {
             eprintln!("ERROR: <PACKAGE> must be a relative path from <DIR>!");
-            return;
+            continue;
         }
 
         let path = ctx.dir.join(package);
         if path == ctx.target {
             eprintln!("ERROR: <TARGET> is the same as <PACKAGE>!");
-            return;
+            continue;
         }
 
         utils::stow_entries_in_dir(&ctx, &path, &path);

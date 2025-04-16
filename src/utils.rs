@@ -17,6 +17,7 @@ pub fn stow_entries_in_dir(ctx: &Context, base: &Path, path: &Path) {
         }
     };
 
+    // TODO: Extract this part, so it can be reused in unstow function
     for entry in entries {
         let entry_path = match entry {
             Ok(entry) => entry.path(),
