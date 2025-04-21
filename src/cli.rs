@@ -1,10 +1,12 @@
-use clap::Parser;
 use std::path::PathBuf;
+
+use clap::{ArgAction, Parser};
 
 #[derive(Parser, Debug)]
 #[command(version)]
 pub struct Cli {
-    pub package: PathBuf,
+    #[arg(action = ArgAction::Append)]
+    pub package: Vec<PathBuf>,
 
     /// The directory that contains the package [default: current directory]
     #[arg(short, long)]
@@ -21,6 +23,10 @@ pub struct Cli {
     /// Print additional logging information
     #[arg(short, long)]
     pub verbose: bool,
+
+    /// Print raw errors
+    #[arg(long)]
+    pub debug: bool,
 }
 
 impl Cli {

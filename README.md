@@ -1,14 +1,26 @@
-# Strow
+# strow
 
-Strow is a CLI app based on [GNU Stow](https://www.gnu.org/software/stow/)
+`strow` is a symlink manager that make files located in separate directories appear to be installed in the same place.
 
-> GNU Stow is a symlink farm manager that takes distinct packages of software and/or data located in separate directories on the filesystem and makes them appear to be installed in the same place.
+## How It Works
+
+It recursively match all files in the package directory and the target directory, then tries to create symlink if target doesn't exists, otherwise it will continue to recurse directory until all entries are processed.
+
+## Usage
+
+```bash
+strow [OPTIONS] [PACKAGE]...
+```
 
 ## Features
 
 - [x] Basic stow functionality
+- [x] Multi package
 - [ ] Delete and restow
-- [ ] Regex filter
-- [ ] Dotfiles prefix
-- [ ] Multi package
-- [ ] Concurrency
+- [ ] Everthing else in `stow`
+
+## Credits
+
+`strow` is based on [GNU Stow](https://www.gnu.org/software/stow/)
+
+For further information, please refer to [GNU Stow documentation](https://www.gnu.org/software/stow/manual/stow.html).
