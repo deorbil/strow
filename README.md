@@ -1,6 +1,8 @@
+<!-- markdownlint-disable MD013 -->
+
 # strow
 
-`strow` is a symlink manager that make files located in separate directories appear to be installed in the same place.
+strow is a symlink manager that make files located in separate directories appear to be installed in the same place.
 
 ## How It Works
 
@@ -21,6 +23,9 @@ strow [OPTIONS] [PACKAGE]...
 
 ## Credits
 
-`strow` is based on [GNU Stow](https://www.gnu.org/software/stow/)
+strow is based on [GNU Stow][stow]
 
-For further information, please refer to [GNU Stow documentation](https://www.gnu.org/software/stow/manual/stow.html).
+For further information, please refer to [GNU Stow documentation][stow-docs].
+
+[stow]: https://www.gnu.org/software/stow/
+[stow-docs]: https://www.gnu.org/software/stow/manual/stow.html
